@@ -1,0 +1,16 @@
+Package: OMPutils
+Type: Package
+Title: 'Rcpp' Implemenations of Commonly Used Base R Fuctions with OpenMP Integration 
+Version: 0.0.1
+Author: Phillip Gurman
+Maintainer: Phillip Gurman <phillip.gurman@gmail.com>
+Description: Generalised functions in Rcpp for faster analysis of data.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
+Imports:
+    Rcpp (>= 0.12.0),
+    data.table
+LinkingTo: Rcpp, RcppArmadillo, RcppProgress
+RoxygenNote: 6.0.1
+Suggests: testthat
