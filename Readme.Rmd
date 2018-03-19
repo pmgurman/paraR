@@ -1,11 +1,11 @@
-# OMPutils
+# ParaR
 
-The concept behind this package is to implement a variety of base R functions in C++ using Rcpp. It is further intended that these functions will be implemented with implicint parallelism, using either OpenMP or RcppParallel. This package is inspired on two fronts, 
+The concept behind this package is to implement a variety of base R functions in C++ using Rcpp. It is further intended that these functions will be implemented with implicint parallelism, using either OpenMP or RcppParallel. This package is inspired on two fronts: 
 
 Firstly there are base R functions that can be improved to reduce computation times. For instance, the current implementation of the `rank()` funciton is not very efficient on numeric vectors. If we implement this funciton in Rcpp, we can achieve the following:
 
 ```{r}
-library(OMPutils)
+library(paraR)
 library(microbenchmark)
 x <- rnorm(1E4)
 
