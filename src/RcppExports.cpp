@@ -55,21 +55,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// par_dist_old
-SEXP par_dist_old(NumericMatrix& x, std::string method, bool na_rm, int threads, bool display_progress);
-RcppExport SEXP _paraR_par_dist_old(SEXP xSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< std::string >::type method(methodSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(par_dist_old(x, method, na_rm, threads, display_progress));
-    return rcpp_result_gen;
-END_RCPP
-}
 // Rcpp_as_numeric_matrix
 NumericMatrix Rcpp_as_numeric_matrix(DataFrame x);
 RcppExport SEXP _paraR_Rcpp_as_numeric_matrix(SEXP xSEXP) {
@@ -213,7 +198,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_paraR_par_cor_matrix", (DL_FUNC) &_paraR_par_cor_matrix, 2},
     {"_paraR_par_col_cors", (DL_FUNC) &_paraR_par_col_cors, 3},
     {"_paraR_par_dist", (DL_FUNC) &_paraR_par_dist, 1},
-    {"_paraR_par_dist_old", (DL_FUNC) &_paraR_par_dist_old, 5},
     {"_paraR_Rcpp_as_numeric_matrix", (DL_FUNC) &_paraR_Rcpp_as_numeric_matrix, 1},
     {"_paraR_par_mean", (DL_FUNC) &_paraR_par_mean, 2},
     {"_paraR_par_colMeans", (DL_FUNC) &_paraR_par_colMeans, 1},

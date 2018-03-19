@@ -26,19 +26,6 @@ par_dist <- function(mat) {
     .Call('_paraR_par_dist', PACKAGE = 'paraR', mat)
 }
 
-#' Matrix Distance Measures
-#'
-#' Calculate the distance bewteen matrix rows using various distance measures.
-#'
-#' OpenMP is used to calculate improve calculation times.
-#' @param x A numeric vector
-#' @param na_rm Does nothing at present.
-#' @param threads The number of threads to run calculation over
-#' @export
-par_dist_old <- function(x, method = "euclidian", na_rm = FALSE, threads = 1L, display_progress = FALSE) {
-    .Call('_paraR_par_dist_old', PACKAGE = 'paraR', x, method, na_rm, threads, display_progress)
-}
-
 Rcpp_as_numeric_matrix <- function(x) {
     .Call('_paraR_Rcpp_as_numeric_matrix', PACKAGE = 'paraR', x)
 }

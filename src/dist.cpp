@@ -23,7 +23,7 @@ struct JsDistance : public Worker {
   RMatrix<double> rmat;
 
   // initialize from Rcpp input and output matrixes (the RMatrix class
-  // can be automatically converted to from the Rcpp matrix type)
+  // can be automatically convelrted to from the Rcpp matrix type)
   JsDistance(const NumericMatrix mat, NumericMatrix rmat)
     : mat(mat), rmat(rmat) {}
 
@@ -75,3 +75,16 @@ NumericMatrix par_dist(NumericMatrix mat) {
 
   return rmat;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
