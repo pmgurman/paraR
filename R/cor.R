@@ -25,7 +25,13 @@ par_cor <- function(x, y = NULL, use = "everything", method = "pearson", threads
     if (method == "spearman") {
       stop("Spearman is not currently supported on a matrix")
     } else {
-      # par_cor_matrix(x,threads = threads)
+      par_cor_matrix(x,threads = threads)
+    }
+  } else if(is.matrix(x)  & is.matrix(y)) {
+    if (method == "spearman") {
+      stop("Spearman is not currently supported for cross matrix correlations")
+    } else {
+      par_col_cors(x, y, threads = threads)
     }
   }
 

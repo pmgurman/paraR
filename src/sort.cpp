@@ -1,4 +1,4 @@
-//' @useDynLib OMPutils
+//' @useDynLib paraR
 //' @importFrom Rcpp sourceCpp
 
 
@@ -20,4 +20,7 @@ NumericVector par_sort(NumericVector & x) {
   __gnu_parallel::sort(sort_x.begin(), sort_x.end());
   return sort_x;
 }
+
+
+
 

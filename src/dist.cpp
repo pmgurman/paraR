@@ -1,9 +1,56 @@
 #include <Rcpp.h>
-#include <omp.h>
-// [[Rcpp::plugins(openmp)]]
-// [[Rcpp::depends(RcppProgress)]]
-#include <progress.hpp>
+
 using namespace Rcpp;
+// [[Rcpp::depends(RcppParallel)]]
+#include <RcppParallel.h>
+using namespace RcppParallel;
+
+#include <cmath>
+#include <algorithm>
+
+// helper function for taking the average of two numbers
+inline double sq_diff(double val1, double val2) {
+  return  std::pow(val1 - val2,2);
+}
+
+
+struct JsDistance : public Worker {
+
+  // input matrix to read from
+  const RMatrix<double> mat;
+
+  // output matrix to write to
+  RMatrix<double> rmat;
+
+  // initialize from Rcpp input and output matrixes (the RMatrix class
+  // can be automatically converted to from the Rcpp matrix type)
+  JsDistance(const NumericMatrix mat, NumericMatrix rmat)
+    : mat(mat), rmat(rmat) {}
+
+  // function call operator that work for the specified range (begin/end)
+  void operator()(std::size_t begin, std::size_t end) {
+#pragma omp for simd
+    for (std::size_t i = begin; i < end; i++) {
+      for (std::size_t j = 0; j < i; j++) {
+
+        // rows we will operate on
+        RMatrix<double>::Row row1 = mat.row(i);
+        RMatrix<double>::Row row2 = mat.row(j);
+
+        // compute the average using std::tranform from the STL
+        double diff_sum = 0;
+
+        for (std::size_t k = 0; k < row1.length(); k++) {
+          diff_sum += std::pow(row1[i] - row2[i],2);
+        }
+
+        // write to output matrix
+        rmat(i,j) = std::pow(diff_sum,0.5);
+      }
+    }
+  }
+};
+
 
 //' Matrix Distance Measures
 //'
@@ -15,46 +62,16 @@ using namespace Rcpp;
 //' @param threads The number of threads to run calculation over
 //' @export
 // [[Rcpp::export]]
-SEXP rcpp_dist(NumericMatrix& x, std::string method = "euclidian",
-                        bool na_rm = false, int threads = 1, bool display_progress = false) {
-  int x_nrows = x.nrow();
-  int x_ncols = x.ncol();
-  NumericMatrix dist(x_nrows,x_nrows);
+NumericMatrix par_dist(NumericMatrix mat) {
 
-#ifdef _OPENMP
-    omp_set_num_threads(threads);
-#endif
+  // allocate the matrix we will return
+  NumericMatrix rmat(mat.nrow(), mat.nrow());
 
+  // create the worker
+  JsDistance jsDistance(mat, rmat);
 
- Progress p(x_nrows, display_progress);
-#pragma omp parallel for schedule(dynamic)
-  for (int i = 0; i < x_nrows; ++i) {
-    if (!Progress::check_abort() ) {
-      for (int j = 0; j<=i; ++j) {
-        if (method == "euclidian") {
-          double temp_dist = 0;
+  // call it with parallelFor
+  parallelFor(0, mat.nrow(), jsDistance,100);
 
-          for (int k = 0; k< x_ncols; k++) {
-            temp_dist += pow(x(i,k) - x(j,k),2);
-          }
-          dist(i,j) = pow(temp_dist,0.5);
-        } else if (method == "hamming") {
-
-          double temp_dist = 0;
-
-          for (int k = 0; k < x_ncols; k++) {
-            if (x(i,k) != x(j,k)) {
-              temp_dist += 1;
-            }
-          }
-          dist(i,j) = temp_dist / x_ncols;
-        }
-      }
-    }
-    p.increment();
-  }
-  return(dist);
+  return rmat;
 }
-
-
-

@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // par_cor_vecs
 double par_cor_vecs(NumericVector& x, NumericVector& y, int threads);
-RcppExport SEXP OMPutils_par_cor_vecs(SEXP xSEXP, SEXP ySEXP, SEXP threadsSEXP) {
+RcppExport SEXP _paraR_par_cor_vecs(SEXP xSEXP, SEXP ySEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -21,7 +21,7 @@ END_RCPP
 }
 // par_cor_matrix
 NumericMatrix par_cor_matrix(NumericMatrix& X, int threads);
-RcppExport SEXP OMPutils_par_cor_matrix(SEXP XSEXP, SEXP threadsSEXP) {
+RcppExport SEXP _paraR_par_cor_matrix(SEXP XSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -31,9 +31,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rcpp_dist
-SEXP rcpp_dist(NumericMatrix& x, std::string method, bool na_rm, int threads, bool display_progress);
-RcppExport SEXP OMPutils_rcpp_dist(SEXP xSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
+// par_col_cors
+NumericVector par_col_cors(NumericMatrix& X, NumericMatrix& Y, int threads);
+RcppExport SEXP _paraR_par_col_cors(SEXP XSEXP, SEXP YSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix& >::type X(XSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix& >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_col_cors(X, Y, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
+// par_dist
+NumericMatrix par_dist(NumericMatrix mat);
+RcppExport SEXP _paraR_par_dist(SEXP matSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_dist(mat));
+    return rcpp_result_gen;
+END_RCPP
+}
+// par_dist_old
+SEXP par_dist_old(NumericMatrix& x, std::string method, bool na_rm, int threads, bool display_progress);
+RcppExport SEXP _paraR_par_dist_old(SEXP xSEXP, SEXP methodSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -42,13 +66,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
     Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(rcpp_dist(x, method, na_rm, threads, display_progress));
+    rcpp_result_gen = Rcpp::wrap(par_dist_old(x, method, na_rm, threads, display_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 // Rcpp_as_numeric_matrix
 NumericMatrix Rcpp_as_numeric_matrix(DataFrame x);
-RcppExport SEXP OMPutils_Rcpp_as_numeric_matrix(SEXP xSEXP) {
+RcppExport SEXP _paraR_Rcpp_as_numeric_matrix(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,35 +82,31 @@ BEGIN_RCPP
 END_RCPP
 }
 // par_mean
-double par_mean(NumericVector& x, bool na_rm, int threads);
-RcppExport SEXP OMPutils_par_mean(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
+double par_mean(Rcpp::NumericVector& x, bool na_rm);
+RcppExport SEXP _paraR_par_mean(SEXP xSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    rcpp_result_gen = Rcpp::wrap(par_mean(x, na_rm, threads));
+    rcpp_result_gen = Rcpp::wrap(par_mean(x, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // par_colMeans
-NumericVector par_colMeans(NumericMatrix& x, bool na_rm, int threads, bool display_progress);
-RcppExport SEXP OMPutils_par_colMeans(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
+NumericVector par_colMeans(NumericMatrix mat);
+RcppExport SEXP _paraR_par_colMeans(SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(par_colMeans(x, na_rm, threads, display_progress));
+    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_colMeans(mat));
     return rcpp_result_gen;
 END_RCPP
 }
 // par_rank
 NumericVector par_rank(NumericVector& x, int threads);
-RcppExport SEXP OMPutils_par_rank(SEXP xSEXP, SEXP threadsSEXP) {
+RcppExport SEXP _paraR_par_rank(SEXP xSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -98,7 +118,7 @@ END_RCPP
 }
 // par_sort
 NumericVector par_sort(NumericVector& x);
-RcppExport SEXP OMPutils_par_sort(SEXP xSEXP) {
+RcppExport SEXP _paraR_par_sort(SEXP xSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -109,7 +129,7 @@ END_RCPP
 }
 // par_sum
 double par_sum(NumericVector& x, bool na_rm, int threads);
-RcppExport SEXP OMPutils_par_sum(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
+RcppExport SEXP _paraR_par_sum(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -120,9 +140,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// par_sum2
+double par_sum2(NumericVector& x, bool na_rm, int threads);
+RcppExport SEXP _paraR_par_sum2(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_sum2(x, na_rm, threads));
+    return rcpp_result_gen;
+END_RCPP
+}
 // par_colSums
 SEXP par_colSums(NumericMatrix& x, bool na_rm, int threads, bool display_progress);
-RcppExport SEXP OMPutils_par_colSums(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
+RcppExport SEXP _paraR_par_colSums(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -134,9 +167,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// par_colSums2
+SEXP par_colSums2(NumericMatrix& x, bool na_rm, int threads, bool display_progress);
+RcppExport SEXP _paraR_par_colSums2(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
+    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
+    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_colSums2(x, na_rm, threads, display_progress));
+    return rcpp_result_gen;
+END_RCPP
+}
 // par_var
 double par_var(NumericVector x, bool na_rm, int threads);
-RcppExport SEXP OMPutils_par_var(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
+RcppExport SEXP _paraR_par_var(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -149,7 +196,7 @@ END_RCPP
 }
 // par_colVars
 NumericVector par_colVars(const NumericMatrix& x, bool na_rm, int threads);
-RcppExport SEXP OMPutils_par_colVars(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
+RcppExport SEXP _paraR_par_colVars(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -162,22 +209,26 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"OMPutils_par_cor_vecs", (DL_FUNC) &OMPutils_par_cor_vecs, 3},
-    {"OMPutils_par_cor_matrix", (DL_FUNC) &OMPutils_par_cor_matrix, 2},
-    {"OMPutils_rcpp_dist", (DL_FUNC) &OMPutils_rcpp_dist, 5},
-    {"OMPutils_Rcpp_as_numeric_matrix", (DL_FUNC) &OMPutils_Rcpp_as_numeric_matrix, 1},
-    {"OMPutils_par_mean", (DL_FUNC) &OMPutils_par_mean, 3},
-    {"OMPutils_par_colMeans", (DL_FUNC) &OMPutils_par_colMeans, 4},
-    {"OMPutils_par_rank", (DL_FUNC) &OMPutils_par_rank, 2},
-    {"OMPutils_par_sort", (DL_FUNC) &OMPutils_par_sort, 1},
-    {"OMPutils_par_sum", (DL_FUNC) &OMPutils_par_sum, 3},
-    {"OMPutils_par_colSums", (DL_FUNC) &OMPutils_par_colSums, 4},
-    {"OMPutils_par_var", (DL_FUNC) &OMPutils_par_var, 3},
-    {"OMPutils_par_colVars", (DL_FUNC) &OMPutils_par_colVars, 3},
+    {"_paraR_par_cor_vecs", (DL_FUNC) &_paraR_par_cor_vecs, 3},
+    {"_paraR_par_cor_matrix", (DL_FUNC) &_paraR_par_cor_matrix, 2},
+    {"_paraR_par_col_cors", (DL_FUNC) &_paraR_par_col_cors, 3},
+    {"_paraR_par_dist", (DL_FUNC) &_paraR_par_dist, 1},
+    {"_paraR_par_dist_old", (DL_FUNC) &_paraR_par_dist_old, 5},
+    {"_paraR_Rcpp_as_numeric_matrix", (DL_FUNC) &_paraR_Rcpp_as_numeric_matrix, 1},
+    {"_paraR_par_mean", (DL_FUNC) &_paraR_par_mean, 2},
+    {"_paraR_par_colMeans", (DL_FUNC) &_paraR_par_colMeans, 1},
+    {"_paraR_par_rank", (DL_FUNC) &_paraR_par_rank, 2},
+    {"_paraR_par_sort", (DL_FUNC) &_paraR_par_sort, 1},
+    {"_paraR_par_sum", (DL_FUNC) &_paraR_par_sum, 3},
+    {"_paraR_par_sum2", (DL_FUNC) &_paraR_par_sum2, 3},
+    {"_paraR_par_colSums", (DL_FUNC) &_paraR_par_colSums, 4},
+    {"_paraR_par_colSums2", (DL_FUNC) &_paraR_par_colSums2, 4},
+    {"_paraR_par_var", (DL_FUNC) &_paraR_par_var, 3},
+    {"_paraR_par_colVars", (DL_FUNC) &_paraR_par_colVars, 3},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_OMPutils(DllInfo *dll) {
+RcppExport void R_init_paraR(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }

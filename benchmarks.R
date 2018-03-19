@@ -1,14 +1,10 @@
-library(microbenchmark)
-library(matrixStats)
-library(rbenchmark)
-library(OMPutils)
-library(ggplot2)
-library(parallel)
+pacman::p_load(microbenchmark, matrixStats, rbenchmark, paraR, ggplot2, parallel)
 
-n <- 1E8
+n <- (3e4)^2
 x <- rnorm(n, mean = 1E6, sd = 1E3)
 X <- matrix(x,nrow = sqrt(n))
 y <- rnorm(n)
+Y <- matrix(y,nrow = sqrt(n))
 
 
 # Sum ----
@@ -16,16 +12,18 @@ sum(x) - par_sum(x)
 p <- microbenchmark(par_sum(x),
                par_sum(x, threads = 2),
                par_sum(x, threads = 4),
-               sum(x))
+               par_sum(x, threads = 6),
+               sum(x),times = 10)
 p
 autoplot(p)
 
 
 
 summary(par_colSums(X) - colSums(X))
-p <- microbenchmark(OMPutils:::par_colSums(X),
-                    OMPutils:::par_colSums(X, threads = 2),
-                    OMPutils:::par_colSums(X, threads = 4),
+p <- microbenchmark(par_colSums(X),
+                    par_colSums(X, threads = 2),
+                    par_colSums(X, threads = 4),
+                    par_colSums(X, threads = 6),
                     colSums(X),
                     colSums2(X))
 
@@ -36,17 +34,20 @@ autoplot(p)
 # Mean ----
 
 mean(x) - par_mean(x)
+
+
 p <-microbenchmark(par_mean(x),
-                   par_mean(x, threads = 2),
-                   par_mean(x, threads = 4),
-                   mean(x))
+                   mean(x),
+                   times = 10)
 print(p)
 autoplot(p)
 
-colMeans(X) - par_colMeans(X)
+summary(colMeans(X) - par_colMeans(X))
+summary(colMeans(X) - par_colMeans2(X))
 p <-microbenchmark(par_colMeans(X),
                    OMPutils:::par_colMeans(X, threads = 2),
                    OMPutils:::par_colMeans(X, threads = 4),
+                   OMPutils:::par_colMeans2(X),
                    mean(X))
 print(p)
 autoplot(p)
@@ -60,7 +61,8 @@ p <- microbenchmark(var(x),
                     par_var(x),
                     par_var(x,threads = 2),
                     par_var(x,threads = 4),
-                    par_var(x,threads = 8))
+                    par_var2(x),
+                    par_var2(x, threads = 4))
 
 print(p)
 autoplot(p)
@@ -69,8 +71,7 @@ summary(colVars(X) - OMPutils:::par_colVars(X, threads = 4))
 p <- microbenchmark(
                     matrixStats::colVars(X),
                       OMPutils:::par_colVars(X),
-                      OMPutils:::par_colVars(X, threads = 2),
-                      OMPutils:::par_colVars(X, threads = 4))
+                      OMPutils:::par_colVars(X, threads = 2))
 
 print(p)
 autoplot(p)
@@ -78,8 +79,9 @@ autoplot(p)
 
 cor(x,y)  - par_cor(x,y)
 p <- microbenchmark(cor(x,y),
-               par_cor(x,y),
-               par_cor(x,y,threads = 4))
+                    par_cor(x,y),
+                    par_cor(x,y,threads = 4L),
+               coop::pcor(x,y))
 print(p)
 autoplot(p)
 
@@ -96,8 +98,12 @@ summary(as.numeric(cor(X) - par_cor(X)))
 
 p <- microbenchmark(cor(X),
                       OMPutils:::par_cor(X),
-                      OMPutils:::par_cor(X, threads = 4))
+                      OMPutils:::par_cor(X, threads = 4),
+                    coop::pcor(X))
 
+
+# Pairwise columsn
+summary(par_cor(X,Y,threads = 2) - sapply(1:ncol(X), function(n) cor(X[,n], Y[,n])))
 
 # Dist -----
 X <- matrix(sample(0:2,5e5,replace = TRUE),nrow = 1e3)

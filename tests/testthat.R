@@ -1,4 +1,4 @@
 library(testthat)
-library(OMPutils)
+library(paraR)
 
-test_check("OMPutils")
+test_check("paraR")

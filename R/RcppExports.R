@@ -2,11 +2,15 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 par_cor_vecs <- function(x, y, threads = 1L) {
-    .Call('OMPutils_par_cor_vecs', PACKAGE = 'OMPutils', x, y, threads)
+    .Call('_paraR_par_cor_vecs', PACKAGE = 'paraR', x, y, threads)
 }
 
 par_cor_matrix <- function(X, threads = 1L) {
-    .Call('OMPutils_par_cor_matrix', PACKAGE = 'OMPutils', X, threads)
+    .Call('_paraR_par_cor_matrix', PACKAGE = 'paraR', X, threads)
+}
+
+par_col_cors <- function(X, Y, threads = 1L) {
+    .Call('_paraR_par_col_cors', PACKAGE = 'paraR', X, Y, threads)
 }
 
 #' Matrix Distance Measures
@@ -18,12 +22,25 @@ par_cor_matrix <- function(X, threads = 1L) {
 #' @param na_rm Does nothing at present.
 #' @param threads The number of threads to run calculation over
 #' @export
-rcpp_dist <- function(x, method = "euclidian", na_rm = FALSE, threads = 1L, display_progress = FALSE) {
-    .Call('OMPutils_rcpp_dist', PACKAGE = 'OMPutils', x, method, na_rm, threads, display_progress)
+par_dist <- function(mat) {
+    .Call('_paraR_par_dist', PACKAGE = 'paraR', mat)
+}
+
+#' Matrix Distance Measures
+#'
+#' Calculate the distance bewteen matrix rows using various distance measures.
+#'
+#' OpenMP is used to calculate improve calculation times.
+#' @param x A numeric vector
+#' @param na_rm Does nothing at present.
+#' @param threads The number of threads to run calculation over
+#' @export
+par_dist_old <- function(x, method = "euclidian", na_rm = FALSE, threads = 1L, display_progress = FALSE) {
+    .Call('_paraR_par_dist_old', PACKAGE = 'paraR', x, method, na_rm, threads, display_progress)
 }
 
 Rcpp_as_numeric_matrix <- function(x) {
-    .Call('OMPutils_Rcpp_as_numeric_matrix', PACKAGE = 'OMPutils', x)
+    .Call('_paraR_Rcpp_as_numeric_matrix', PACKAGE = 'paraR', x)
 }
 
 #' Calculate the mean of a numeric vector
@@ -32,8 +49,8 @@ Rcpp_as_numeric_matrix <- function(x) {
 #' @param na_rm Does nothing at present.
 #' @param threads The number of threads to run calculation over
 #' @export
-par_mean <- function(x, na_rm = FALSE, threads = 1L) {
-    .Call('OMPutils_par_mean', PACKAGE = 'OMPutils', x, na_rm, threads)
+par_mean <- function(x, na_rm = FALSE) {
+    .Call('_paraR_par_mean', PACKAGE = 'paraR', x, na_rm)
 }
 
 #' Calculate the column means for each column of a matrix.
@@ -43,15 +60,15 @@ par_mean <- function(x, na_rm = FALSE, threads = 1L) {
 #' @param na_rm Does nothing at present.
 #' @param threads The number of threads to run calculation over
 #' @export
-par_colMeans <- function(x, na_rm = FALSE, threads = 1L, display_progress = FALSE) {
-    .Call('OMPutils_par_colMeans', PACKAGE = 'OMPutils', x, na_rm, threads, display_progress)
+par_colMeans <- function(mat) {
+    .Call('_paraR_par_colMeans', PACKAGE = 'paraR', mat)
 }
 
 par_rank <- function(x, threads = 1L) {
-    .Call('OMPutils_par_rank', PACKAGE = 'OMPutils', x, threads)
+    .Call('_paraR_par_rank', PACKAGE = 'paraR', x, threads)
 }
 
-#' @useDynLib OMPutils
+#' @useDynLib paraR
 #' @importFrom Rcpp sourceCpp
 NULL
 
@@ -61,7 +78,7 @@ NULL
 #' @param x A numeric vector
 #' @export
 par_sort <- function(x) {
-    .Call('OMPutils_par_sort', PACKAGE = 'OMPutils', x)
+    .Call('_paraR_par_sort', PACKAGE = 'paraR', x)
 }
 
 #' Vector and Matrix Sums
@@ -75,7 +92,11 @@ par_sort <- function(x) {
 #' @param threads The number of threads to run calculation over
 #' @export
 par_sum <- function(x, na_rm = FALSE, threads = 1L) {
-    .Call('OMPutils_par_sum', PACKAGE = 'OMPutils', x, na_rm, threads)
+    .Call('_paraR_par_sum', PACKAGE = 'paraR', x, na_rm, threads)
+}
+
+par_sum2 <- function(x, na_rm = FALSE, threads = 1L) {
+    .Call('_paraR_par_sum2', PACKAGE = 'paraR', x, na_rm, threads)
 }
 
 #' Calculate the column sums for each column of a matrix.
@@ -86,7 +107,18 @@ par_sum <- function(x, na_rm = FALSE, threads = 1L) {
 #' @param threads The number of threads to run calculation over
 #' @export
 par_colSums <- function(x, na_rm = FALSE, threads = 1L, display_progress = FALSE) {
-    .Call('OMPutils_par_colSums', PACKAGE = 'OMPutils', x, na_rm, threads, display_progress)
+    .Call('_paraR_par_colSums', PACKAGE = 'paraR', x, na_rm, threads, display_progress)
+}
+
+#' Calculate the column sums for each column of a matrix.
+#' OpenMP is used to calculate improve calculation times.
+#' TODO: Needs to implement a multicore cliff.
+#' @param x A numeric vector
+#' @param na_rm Does nothing at present.
+#' @param threads The number of threads to run calculation over
+#' @export
+par_colSums2 <- function(x, na_rm = FALSE, threads = 1L, display_progress = FALSE) {
+    .Call('_paraR_par_colSums2', PACKAGE = 'paraR', x, na_rm, threads, display_progress)
 }
 
 #' Calculate the varance of a vector.
@@ -96,7 +128,7 @@ par_colSums <- function(x, na_rm = FALSE, threads = 1L, display_progress = FALSE
 #' @param x A numeric vector
 #' @export
 par_var <- function(x, na_rm = FALSE, threads = 1L) {
-    .Call('OMPutils_par_var', PACKAGE = 'OMPutils', x, na_rm, threads)
+    .Call('_paraR_par_var', PACKAGE = 'paraR', x, na_rm, threads)
 }
 
 #' Calculate the column variances of a matrix
@@ -107,6 +139,6 @@ par_var <- function(x, na_rm = FALSE, threads = 1L) {
 #' @param threads The number of threads to run calculation over
 #' @export
 par_colVars <- function(x, na_rm = FALSE, threads = 1L) {
-    .Call('OMPutils_par_colVars', PACKAGE = 'OMPutils', x, na_rm, threads)
+    .Call('_paraR_par_colVars', PACKAGE = 'paraR', x, na_rm, threads)
 }
 

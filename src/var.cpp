@@ -1,8 +1,8 @@
-#include <Rcpp.h>
-#include <omp.h>
-using namespace Rcpp;
-// [[Rcpp::plugins(openmp)]]
+#include <RcppArmadillo.h>
 
+using namespace Rcpp;
+#include <omp.h>
+// [[Rcpp::plugins(openmp)]]
 
 //' Calculate the varance of a vector.
 //' Currently uses the Rcpp sugar implementation of the variance function.
@@ -28,7 +28,7 @@ double par_var(NumericVector x, bool na_rm = false, int threads = 1)
   double mean = sum1 / n;
 
 #pragma omp parallel for reduction(+ : sum2)
- for (int i = 0; i < n; i++) {
+ for (std::size_t i = 0; i < n; i++) {
   sum2 += pow(x[i] - mean,2.0);
  }
 

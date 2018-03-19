@@ -79,33 +79,40 @@ NumericMatrix par_cor_matrix(NumericMatrix& X,
 }
 
 
-////' Calculate the mean of a numeric vector
-////' OpenMP is used to calculate improve calculation times.
-////' @param x A numeric vector
-////' @param na_rm Does nothing at present.
-////' @param threads The number of threads to run calculation over
-////' @export
-// // [[Rcpp::export]]
-//
-// NumericVector par_col_cors(NumericMatrix& x,
-//                            NumericMatrix& y,
-//                            int threads = 1)
-// {
-// #ifdef _OPENMP
-//   if ( threads > 0 )
-//     omp_set_num_threads( threads );
-// #endif
-//
-//   std::size_t I = x.nrow();
-//   std::size_t J = x.ncol();
-//   NumericVector cors(J);
-// #pragma omp parallel for
-// for (std::size_t j; j <= J; j++) {
-//   for (std::size_t i; i <= I; i++) {
-//
-//   }
-// }
-//
-// return(cors);
-// }
+// [[Rcpp::export]]
+
+NumericVector par_col_cors(NumericMatrix& X,
+                           NumericMatrix& Y,
+                           int threads = 1)
+{
+#ifdef _OPENMP
+  if ( threads > 0 )
+    omp_set_num_threads( threads );
+#endif
+
+  std::size_t I = X.nrow();
+  std::size_t J = X.ncol();
+  NumericVector cors(J);
+  double xiyi = 0;
+  double xi2 = 0;
+  double yi2 = 0;
+  double mean_x;
+  double mean_y;
+
+#pragma omp parallel for
+  for (std::size_t j = 0; j < J; j++) {
+    xiyi = 0;
+    xi2 = 0;
+    yi2 = 0;
+    mean_x = mean(X(_,j));
+    mean_y = mean(Y(_,j));
+    for (std::size_t i = 0; i < I; i++) {
+      xiyi += (X(i,j) - mean_x) * (Y(i,j) - mean_y);
+      xi2 += std::pow(X(i,j) - mean_x,2);
+      yi2 += std::pow(Y(i,j) - mean_y,2);
+    }
+    cors(j) = xiyi / (std::pow(xi2,0.5) * std::pow(yi2,0.5));
+  }
+  return(cors);
+}
 

@@ -27,6 +27,22 @@ double par_sum(NumericVector& x, bool na_rm = false, int threads = 1) {
   return(__gnu_parallel::accumulate(x.begin(), x.end(), 0.0));
 }
 
+// [[Rcpp::export]]
+double par_sum2(NumericVector& x, bool na_rm = false, int threads = 1) {
+#ifdef _OPENMP
+  if ( threads > 0 )
+    omp_set_num_threads( threads );
+#endif
+
+  double sum = 0.0;
+#pragma omp parallel for simd reduction(+:sum)
+  for (int i = 0; i < x.length(); ++i) {
+    sum += x[i];
+  }
+  return sum;
+
+}
+
 //' Calculate the column sums for each column of a matrix.
 //' OpenMP is used to calculate improve calculation times.
 //' TODO: Needs to implement a multicore cliff.
@@ -45,12 +61,10 @@ SEXP par_colSums(NumericMatrix& x, bool na_rm = false, int threads = 1, bool dis
   int n = x.nrow();
   NumericVector colSums(m);
   Progress p(n, display_progress);
-#pragma omp parallel for schedule(dynamic)
-
+  #pragma omp parallel for
     for (int j = 0; j < m; ++j) {
       if (! Progress::check_abort() ) {
         p.increment(); // update progress
-
         for (int i = 0; i < n; ++i) {
           colSums[j] += x(i,j);
         }
@@ -62,3 +76,32 @@ SEXP par_colSums(NumericMatrix& x, bool na_rm = false, int threads = 1, bool dis
   return(colSums);
 }
 
+//' Calculate the column sums for each column of a matrix.
+//' OpenMP is used to calculate improve calculation times.
+//' TODO: Needs to implement a multicore cliff.
+//' @param x A numeric vector
+//' @param na_rm Does nothing at present.
+//' @param threads The number of threads to run calculation over
+//' @export
+// [[Rcpp::export]]
+SEXP par_colSums2(NumericMatrix& x, bool na_rm = false, int threads = 1, bool display_progress = false) {
+#ifdef _OPENMP
+  if ( threads > 0 )
+    omp_set_num_threads( threads );
+#endif
+
+  int m = x.ncol();
+  int n = x.nrow();
+  NumericVector colSums(m);
+  Progress p(n, display_progress);
+#pragma omp parallel
+  for (int j = 0; j < m; ++j) {
+#pragma omp  simd
+    for (int i = 0; i < n; ++i) {
+      colSums[j] += x(i,j);
+    }
+  }
+
+
+  return(colSums);
+}
