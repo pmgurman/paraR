@@ -72,13 +72,11 @@ results %>% ggplot(aes(x = x_length, y = median, colour = expr)) +
 # Dist matrix
 
 results <- data.frame()
-for(i in sort(c(10^c(1,2),10^c(2,3)/2))) {
+for(i in sort(c(10^c(1,2,3,4),10^c(2,3,4)/2))) {
   print(i)
   x <- matrix(rnorm(i^2),nrow = i)
 
-  p <-microbenchmark(dist(x),
-                     paraR:::par_dist_old(x),
-                     paraR:::par_dist_old(x, threads = 4),
+  p <-microbenchmark(
                      par_dist(x)
                      ,times = 10, unit = "ms")
   results <- rbind(results,cbind(x_length = prod(dim(x)), summary(p)[,c("expr","median")]))
@@ -89,4 +87,4 @@ p <- results %>% ggplot(aes(x = x_length, y = median, colour = expr, group = exp
   scale_x_log10() +
   scale_y_log10() +
   geom_line()
-p
+ggsave("test.png",p)

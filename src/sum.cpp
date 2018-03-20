@@ -23,7 +23,6 @@ double par_sum(NumericVector& x, bool na_rm = false, int threads = 1) {
   if ( threads > 0 )
     omp_set_num_threads( threads );
 #endif
-  int n = x.length();
   return(__gnu_parallel::accumulate(x.begin(), x.end(), 0.0));
 }
 
@@ -35,7 +34,7 @@ double par_sum2(NumericVector& x, bool na_rm = false, int threads = 1) {
 #endif
 
   double sum = 0.0;
-#pragma omp parallel for simd reduction(+:sum)
+#pragma omp  simd reduction(+:sum)
   for (int i = 0; i < x.length(); ++i) {
     sum += x[i];
   }
@@ -63,13 +62,9 @@ SEXP par_colSums(NumericMatrix& x, bool na_rm = false, int threads = 1, bool dis
   Progress p(n, display_progress);
   #pragma omp parallel for
     for (int j = 0; j < m; ++j) {
-      if (! Progress::check_abort() ) {
-        p.increment(); // update progress
-        for (int i = 0; i < n; ++i) {
-          colSums[j] += x(i,j);
-        }
+      for (int i = 0; i < n; ++i) {
+        colSums[j] += x(i,j);
       }
-
     }
 
 
