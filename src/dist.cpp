@@ -14,7 +14,7 @@ inline double sq_diff(double val1, double val2) {
 }
 
 
-struct JsDistance : public Worker {
+struct Distance : public Worker {
 
   // input matrix to read from
   const RMatrix<double> mat;
@@ -24,12 +24,11 @@ struct JsDistance : public Worker {
 
   // initialize from Rcpp input and output matrixes (the RMatrix class
   // can be automatically convelrted to from the Rcpp matrix type)
-  JsDistance(const NumericMatrix mat, NumericMatrix rmat)
+  Distance(const NumericMatrix mat, NumericMatrix rmat)
     : mat(mat), rmat(rmat) {}
 
   // function call operator that work for the specified range (begin/end)
   void operator()(std::size_t begin, std::size_t end) {
-  #pragma omp simd
     for (std::size_t i = begin; i < end; i++) {
       for (std::size_t j = 0; j < i; j++) {
 
@@ -39,9 +38,9 @@ struct JsDistance : public Worker {
 
         // compute the average using std::tranform from the STL
         double diff_sum = 0;
-
+#pragma omp simd reduction(+:diff_sum)
         for (std::size_t k = 0; k < row1.length(); k++) {
-          diff_sum += std::pow(row1[i] - row2[i],2);
+          diff_sum += std::pow(row1[k] - row2[k],2);
         }
 
         // write to output matrix
@@ -68,10 +67,10 @@ NumericMatrix par_dist(NumericMatrix mat) {
   NumericMatrix rmat(mat.nrow(), mat.nrow());
 
   // create the worker
-  JsDistance jsDistance(mat, rmat);
+  Distance distance(mat, rmat);
 
   // call it with parallelFor
-  parallelFor(0, mat.nrow(), jsDistance,100);
+  parallelFor(0, mat.nrow(), distance);
 
   return rmat;
 }
