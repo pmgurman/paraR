@@ -44,7 +44,7 @@ struct Distance : public Worker {
         }
 
         // write to output matrix
-        rmat(i,j) = std::pow(diff_sum,0.5);
+        rmat(i,j) = rmat(j,i) = std::pow(diff_sum,0.5);
       }
     }
   }
