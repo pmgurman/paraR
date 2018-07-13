@@ -67,24 +67,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // par_mean
-double par_mean(Rcpp::NumericVector& x, bool na_rm);
+double par_mean(const Rcpp::NumericVector& x, bool na_rm);
 RcppExport SEXP _paraR_par_mean(SEXP xSEXP, SEXP na_rmSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector& >::type x(xSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type x(xSEXP);
     Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
     rcpp_result_gen = Rcpp::wrap(par_mean(x, na_rm));
     return rcpp_result_gen;
 END_RCPP
 }
 // par_colMeans
-NumericVector par_colMeans(NumericMatrix mat);
+NumericVector par_colMeans(const NumericMatrix& mat);
 RcppExport SEXP _paraR_par_colMeans(SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type mat(matSEXP);
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
     rcpp_result_gen = Rcpp::wrap(par_colMeans(mat));
     return rcpp_result_gen;
 END_RCPP
@@ -139,30 +139,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // par_colSums
-SEXP par_colSums(NumericMatrix& x, bool na_rm, int threads, bool display_progress);
-RcppExport SEXP _paraR_par_colSums(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
+NumericVector par_colSums(const NumericMatrix& mat);
+RcppExport SEXP _paraR_par_colSums(SEXP matSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(par_colSums(x, na_rm, threads, display_progress));
-    return rcpp_result_gen;
-END_RCPP
-}
-// par_colSums2
-SEXP par_colSums2(NumericMatrix& x, bool na_rm, int threads, bool display_progress);
-RcppExport SEXP _paraR_par_colSums2(SEXP xSEXP, SEXP na_rmSEXP, SEXP threadsSEXP, SEXP display_progressSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< bool >::type na_rm(na_rmSEXP);
-    Rcpp::traits::input_parameter< int >::type threads(threadsSEXP);
-    Rcpp::traits::input_parameter< bool >::type display_progress(display_progressSEXP);
-    rcpp_result_gen = Rcpp::wrap(par_colSums2(x, na_rm, threads, display_progress));
+    Rcpp::traits::input_parameter< const NumericMatrix& >::type mat(matSEXP);
+    rcpp_result_gen = Rcpp::wrap(par_colSums(mat));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -193,6 +176,8 @@ BEGIN_RCPP
 END_RCPP
 }
 
+RcppExport SEXP _paraR_par_colSums2(SEXP, SEXP, SEXP, SEXP);
+
 static const R_CallMethodDef CallEntries[] = {
     {"_paraR_par_cor_vecs", (DL_FUNC) &_paraR_par_cor_vecs, 3},
     {"_paraR_par_cor_matrix", (DL_FUNC) &_paraR_par_cor_matrix, 2},
@@ -205,10 +190,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_paraR_par_sort", (DL_FUNC) &_paraR_par_sort, 1},
     {"_paraR_par_sum", (DL_FUNC) &_paraR_par_sum, 3},
     {"_paraR_par_sum2", (DL_FUNC) &_paraR_par_sum2, 3},
-    {"_paraR_par_colSums", (DL_FUNC) &_paraR_par_colSums, 4},
-    {"_paraR_par_colSums2", (DL_FUNC) &_paraR_par_colSums2, 4},
+    {"_paraR_par_colSums", (DL_FUNC) &_paraR_par_colSums, 1},
     {"_paraR_par_var", (DL_FUNC) &_paraR_par_var, 3},
     {"_paraR_par_colVars", (DL_FUNC) &_paraR_par_colVars, 3},
+    {"_paraR_par_colSums2",           (DL_FUNC) &_paraR_par_colSums2,           4},
     {NULL, NULL, 0}
 };
 

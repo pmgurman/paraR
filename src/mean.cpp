@@ -24,7 +24,12 @@ struct Sum : public Worker
 
    // accumulate just the element of the range I've been asked to
    void operator()(std::size_t begin, std::size_t end) {
-     value += std::accumulate(input.begin() + begin, input.begin() + end, 0.0);
+#pragma omp  simd reduction(+:value)
+
+     for (int i = begin; i < end; ++i) {
+       value += input[i];
+     }
+
    }
 
   // join my value with that of another Sum
@@ -56,7 +61,16 @@ struct ColMeans : public Worker {
       RMatrix<double>::Column col = mat.column(j);
 
       // write to output matrix
-      rvec[j] = std::accumulate(col.begin(), col.end(), 0.0) / col.length();
+      double value = 0;
+      #pragma omp  simd reduction(+:value)
+
+      for (int i = 0; i < col.length(); ++i) {
+        value += col[i];
+      }
+
+      rvec[j] = value;
+
+      //rvec[j] = std::accumulate(col.begin(), col.end(), 0.0) / col.length();
     }
   }
 };
@@ -69,7 +83,7 @@ struct ColMeans : public Worker {
 //' @param threads The number of threads to run calculation over
 //' @export
 // [[Rcpp::export]]
-double par_mean(Rcpp::NumericVector& x, bool na_rm = false) {
+double par_mean(const Rcpp::NumericVector& x, bool na_rm = false) {
 
   // declare the Sum instance
   Sum sum(x);
@@ -91,7 +105,7 @@ double par_mean(Rcpp::NumericVector& x, bool na_rm = false) {
 //' @param threads The number of threads to run calculation over
 //' @export
 // [[Rcpp::export]]
-NumericVector par_colMeans(NumericMatrix mat) {
+NumericVector par_colMeans(const NumericMatrix& mat) {
 
   // allocate the matrix we will return
   NumericVector rvec(mat.ncol());
@@ -100,9 +114,16 @@ NumericVector par_colMeans(NumericMatrix mat) {
   ColMeans colMeans(mat, rvec);
 
   // call it with parallelFor
-  parallelFor(0, mat.nrow(), colMeans, 10);
+  parallelFor(0, mat.nrow(), colMeans); //, 10
 
   return rvec;
 }
+
+
+
+
+
+
+
 
 

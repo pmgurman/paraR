@@ -93,19 +93,8 @@ par_sum2 <- function(x, na_rm = FALSE, threads = 1L) {
 #' @param na_rm Does nothing at present.
 #' @param threads The number of threads to run calculation over
 #' @export
-par_colSums <- function(x, na_rm = FALSE, threads = 1L, display_progress = FALSE) {
-    .Call('_paraR_par_colSums', PACKAGE = 'paraR', x, na_rm, threads, display_progress)
-}
-
-#' Calculate the column sums for each column of a matrix.
-#' OpenMP is used to calculate improve calculation times.
-#' TODO: Needs to implement a multicore cliff.
-#' @param x A numeric vector
-#' @param na_rm Does nothing at present.
-#' @param threads The number of threads to run calculation over
-#' @export
-par_colSums2 <- function(x, na_rm = FALSE, threads = 1L, display_progress = FALSE) {
-    .Call('_paraR_par_colSums2', PACKAGE = 'paraR', x, na_rm, threads, display_progress)
+par_colSums <- function(mat) {
+    .Call('_paraR_par_colSums', PACKAGE = 'paraR', mat)
 }
 
 #' Calculate the varance of a vector.
